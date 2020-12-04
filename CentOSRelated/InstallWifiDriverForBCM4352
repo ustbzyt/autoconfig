@@ -1,0 +1,25 @@
+Installation of Wifi Driver for BCM4352 in CentOS 7.6
+Tricky part is there is wl-kmold and kmold-wl. The wl-kmold*nosrc.rpm is the file downloaded from online, and the kmod-wl is the product from first 6 steps.
+1.	Install needed tools and packages (incase not installed) with the following commands (# means as root):
+# yum groupinstall 'Development Tools'
+# yum install redhat-lsb kernel-abi-whitelists
+# yum install kernel-devel-$(uname -r)
+2.	Configure a build tree and minimal .rpmmacros with commands ($ means as regular user. If as root, the directory will be at here: /root/rpmbuild/…):
+$ mkdir -p ~/rpmbuild/{BUILD,RPMS,SPECS,SOURCES,SRPMS}
+$ echo -e "%_topdir $(echo $HOME)/rpmbuild\n%dist .el$(lsb_release -s -r|cut -d"." -f1).local" >> ~/.rpmmacros
+3.	Download the wl-kmold (!!!)*nosrc.rpm  file from the website to /home/Downloads/:
+http://elrepo.org/linux/elrepo/el7/SRPMS/wl-kmod-6_30_223_271-5.el7.elrepo.nosrc.rpm
+4.	Download the Broadcom driver from broadcom website to /home/Downloads/:
+http://www.broadcom.com/support/802.11
+(select the Linux® STA 64-bit drivers, the file name should be : hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar)
+5.	Copy the downloaded file to /home/yuntao/rpmbuild/SOURCE with command:
+$ cp /home/yuntao/Downloads/hybrid-v35_64-nodebug-pcoem-6_30_223_271.tar  ~/rpmbuild/SOURCE
+6.	Build kmod-wl (!!!) with command:
+$ rpmbuild --rebuild --define 'packager yuntao' /home/yuntao/Downloads/wl-kmod-6_30_223_271-5.el7.elrepo.nosrc.rpm
+( now in the folder /home/yuntao/rpmbuild/RPMS, a new folder x86_64 should be generated. In there, it is the file used for next step: kmod-wl-6_30_223_271-4.el7.local.x86_64.rpm)
+7.	Install the generated kmod-wl file with command:
+$ sudo yum install ~/rpmbuild/RPMS/x86_64/kmod-wl-6_30_223_271-4.el7.local.x86_64.rpm
+8.	Restart or start wireless now with command (as root):
+# modprobe wl
+9.	Remove build tree with command:
+$rm –rf ~/rpmbuild

@@ -1,0 +1,155 @@
+Installation of Calculation Programs in CentOS
+Job #1. Add keyboard shortcut for gnome-terminal 
+1.	Go to  Settings >> Devices >> Keyboard
+2.	Scroll down to the bottom, and click on the + button
+3.	In the opened window, type in the following information
+Termimal
+Gnome-terminal
+Ctrl + Alt + T
+
+Job #2. Install newer version of cmake
+1.	Remove the default version of cmake. In terminal, type:
+$ sudo yum remove cmake –y
+2.	Add EPEL source. In terminal, type:
+$ sudo yum install epel-release
+3.	In stall cmake3. In terminal, type:
+$ sudo yum install cmake3
+
+Job #3. Install Openmpi
+1.	Move the downloaded openmpi zip file to the folder /home/yuntao/Cal. Unzip it by typing the following command in terminal:
+$ tar –xjf openmpi-3.1.3.tar.bz2
+2.	Get into the newly generated openmpi folder.
+$ cd openmpi-3.1.3
+3.	Configure the installation and then install, by typing the following command in the terminal:
+$ ./configure --prefix=/home/yuntao/Cal/openmpi313 –disable-builtin-atomics
+$ make all install
+4.	Add the directory of the executable of openmpi to the PATH variable. 
+4.1.	Open the .bashrc file by typing the following command in the terminal:
+$ vi ~/.bashrc
+4.2.	Enter the insert mode by pressing i and add the following lines to the end of the file:
+# Added for Openmpi
+export PATH=$PATH:/home/yuntao/Cal/openmpi313/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yuntao/Cal/Openmpi313/lib
+4.3.	Exit the insert mode by pressing Esc, and then save and exit by typing “:wq”
+4.4.	In the terminal, type the following command to update the PATH variable:
+$ source ~/.bashrc
+5.	Check whether openmpi is ready to use or not. In the terminal, type:
+$ mpiexec –V
+
+Job #4. Install RVM (Ruby Version Manager) and ruby 2.6
+1.	Remove the original ruby installed by typing the following command in the  terminal:
+$ sudo yum remove ruby
+2.	Install all required packages for ruby installation by typing the following command in the terminal:
+$ yum install gcc-c++ patch readline readline-devel zlib zlib-devel 
+   libyaml-devel libffi-devel openssl-devel make \
+   bzip2 autoconf automake libtool bison iconv-devel sqlite-devel
+3.	Install RVM by typing in the following command in the terminal one by one:
+$ curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+$ curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+$ curl -L get.rvm.io | bash -s stable
+$ source /etc/profile.d/rvm.sh
+$ rvm reload
+$ rvm requirements run
+4.	Install ruby2.6 by typing in the following command in terminal:
+$ rvm list known
+$ rvm install 2.6
+$ rvm list
+$ ruby –version
+
+Job #5. Install cuby4 (RVM and ruby2.6 must be installed before this)
+1.	Install the blas-devel and lapack-devel packages for faster calculation, by typing in the following command in the terminal:
+$ sudo yum install blas-devel lapack-devel
+2.	Copy the cuby4.tgz file to /home/yuntao/Cal
+3.	Unzip it by the following command:
+$tar –xf cuby4.tgz
+4.	Modify and then copy the file keyword_defaults.yaml to folder /home/yuntao/Cal. It is in this directory: /home/yuntao/Cal/cuby4/config/
+4.1	Modifications include the following: Add # sign to all lines containing Turbomole, change the default directory for any calculation programs (e.g., Change path of mopac executable to /home/yuntao/Cal/MOPAC/MOPAC2016.exe)
+5.	Add the directory of cuby4 to the PATH variable. 
+a.	Open the .bashrc file by typing the following command in the terminal:
+$ vi ~/.bashrc
+b.	Enter the insert mode by pressing i and add the following lines to the end of the file:
+# Added for Cuby4
+export PATH=$PATH:/home/yuntao/Cal/cuby4
+c.	Exit the insert mode by pressing Esc, and then save and exit by typing “:wq”
+d.	In the terminal, type the following command to update the PATH variable:
+$ source ~/.bashrc
+6.	Install cuby4 by the following command:
+$ cuby4 –make
+$ cuby4 –info
+$cuby4 --test
+
+Job #6. Install MOPAC2016
+1.	make a directory for the program in the /home/yuntao/Cal folder using the command:
+$mkdir MOPAC
+2.	copy the MOPAC2016_for_CentOS-7.zip to the newly made folder MOPAC
+3.	unzip the MOPAC2016_for_CentOS-7.zip file in the folder and then remove the zip file by the command:
+$unzip MOPAC2016_for_CentOS-7.zip
+$rm MOPAC2016_for_CentOS-7.zip
+4.	Add permission for everyone to execute the MOPAC2016.exe file with the command:
+$chmod +x MOPAC2016.exe
+5.	Add the directory of MOPAC to the PATH variable. 
+a.	Open the .bashrc file by typing the following command in the terminal:
+$ vi ~/.bashrc
+b.	Enter the insert mode by pressing i and add the following lines to the end of the file:
+# For MOPAC2016
+export PATH=$PATH:/home/yuntao/Cal/MOPAC
+export MOPAC_LICENSE=/home/yuntao/Cal/MOPAC
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yuntao/Cal/MOPAC
+alias mopac='/home/yuntao/Cal/MOPAC/MOPAC2016.exe'
+c.	Exit the insert mode by pressing Esc, and then save and exit by typing “:wq”
+d.	In the terminal, type the following command to update the PATH variable:
+$ source ~/.bashrc
+6.	Install the license of MOPAC with the following command:
+$mopac 12011901a61038356
+
+
+Job #7. Install VMD.
+1.	Copy the vmd zip file to folder /home/yuntao/Cal
+2.	Unzip the vmd zip file by the following command:
+$ tar –xzvf vmd.tar.gz
+3.	Go to the vmd folder and configure the installation with the command shown here:
+$ cd vmd
+$ ./configure
+4.	Install vmd with the command:
+$ cd src
+$ sudo make install
+5.	VMD is ready to use by typing vmd in terminal
+ Job #8. Install molclus
+1.	Copy and unzip molclus in folder /home/yuntao/Cal
+2.	Rename folder name to moclus
+3.	Add permission for everyone to execute the molclus, isostat and xyz2QC file with the command:
+$chmod +x molclus
+$chmod +x isostat
+$chmod +x xyz2QC
+4.	Add the directory of the executables in molclus to the PATH variable. 
+4.1.	Open the .bashrc file by typing the following command in the terminal:
+$ vi ~/.bashrc
+4.2.	Enter the insert mode by pressing i and add the following lines to the end of the file:
+# Added for molclus
+export PATH=$PATH:/home/yuntao/Cal/molclus
+4.3.	Exit the insert mode by pressing Esc, and then save and exit by typing “:wq”
+4.4.	In the terminal, type the following command to update the PATH variable:
+$ source ~/.bashrc
+
+Job #9. Install gromacs. ( cmake3 needs be preinstalled before installing gromacs)
+1.	Copy and unzip the gromacs file in the folder /home/yuntao/Cal with the command:
+$ tar –zxvf gromacs—2019.tar.gz
+2.	Go to the gromacs folder and make a new directory called build with the command:
+$ cd gromacs-2019
+$ mkdir build
+3.	Configure installation with fftw download and installed, allowing for parallel running with the command:
+$ cmake3 .. DCMAKE_INSTALL_PREFIX=/home/yuntao/Cal/gromac –GDMX_BUILD_WON_FFTW=ON  -DGMX_MPI=ON
+4.	Install gromac with command:
+$make install
+5.	Modify the .bashrc file 
+5.1.	Open the .bashrc file by typing the following command in the terminal:
+$ vi ~/.bashrc
+5.2.	Enter the insert mode by pressing i and add the following lines to the end of the file:
+# Added for gromacs
+source /home/yuntao/Cal/gromacs/bin/GMXRC
+5.3.	Exit the insert mode by pressing Esc, and then save and exit by typing “:wq”
+5.4.	In the terminal, type the following command to update the PATH variable:
+$ source ~/.bashrc
+6.	Test the installation with the command:
+$ gmx_mpi -version
+

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Check the number of xyz files in current directory
-count_xyz_gjf(){
+# Define useful functions
+# Function #1: Check the existence of template.gjf file and the number of xyz files in current directory
+chk_xyz_gjf(){
 num_xyz=`ls -1 *.xyz | wc -l`
 if [[ -e template.gjf && $num_xyz == 1 ]]
 then 
@@ -12,11 +13,16 @@ else
 fi
 }
 
-# Get the charge state from the input file name
+# Function #2: Get the charge state from the input file name
 chkchrg(){
 echo "
 *************************************************************
-Checking the charge state based on the input file name..."
+Checking the charge state based on the input file name...
+Note: the default charge states are the following:
+      Ani:-1
+      Neu:0 
+      Cat:+1
+      Change the code if needed."
 Ani="Ani"
 Neu="Neu"
 Cat="Cat"
@@ -37,12 +43,10 @@ else
 	echo "Please include Ani, Neu or Cat in your input file name..."
 	exit
 fi
-echo "*************************************************************
-Starting conformational searches...
-"
+echo "*************************************************************"
 }
 
-# Does one single run and checks the new best
+# Function #3: Do one single run and check the new best
 search(){
 echo "
 Time: $(date '+%Y-%m-%d %H:%M')"
@@ -81,7 +85,7 @@ else
 fi
 }
 
-# Screening of the ensembles 
+# Function #4: Screen the ensembles 
 rescreen(){
 echo "
 Time: $(date '+%Y-%m-%d %H:%M')
@@ -100,6 +104,7 @@ mkdir ../../../HF321GD
 cp crest_ensemble.xyz ../../../HF321GD
 }
 
+
 # The main body starts here
 echo "
        =================================================================
@@ -115,7 +120,7 @@ echo "
 location=$(pwd)
 
 # Make sure the template.gjf and an input xyz file are available.
-count_xyz_gjf
+chk_xyz_gjf
 
 # Part One: conformational search
 inputfile=$(basename ./*.xyz)

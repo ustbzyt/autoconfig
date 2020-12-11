@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Define useful functions
 # Function #1: Check the existence of template.gjf file and the number of xyz files in current directory
 chk_xyz_gjf(){
@@ -100,8 +99,8 @@ cd ReScreen
 crest -screen $sumname -nozs -chrg $chrg >> $output
 echo "Conformational search and screen completed"
 echo "******************************************************************"
-mkdir ../../../HF321GD
 cp crest_ensemble.xyz ../../../HF321GD
+cd ../..
 }
 
 
@@ -128,6 +127,7 @@ inputname=$(echo "$inputfile" | cut -f 1 -d '.')
 # Make necessary directories for the conformer search
 mkdir -p HF321GD crest_search/Sum 
 cp $inputfile crest_search
+# Working in folder crest_search
 cd crest_search
 energy=0
 chkchrg "$inputfile"
@@ -143,22 +143,27 @@ do
 	fi
 done
 
+# Part Two: Screening
 if [ -f ./*.xyz ]
 then
 	rm *.xyz
 fi
 rescreen
+cd ..
 
-if [ -f ./*.gif ]
-then
-	inputfile=$(basename ./*.xyz)
-	cp $inputfile HF321GD
-	cd HF321GD
-	Multiwfn ${inf} << EOF > /dev/null
-100
+# Part Three: Convert crest_ensemble.xyz to gjf files
+# Working in folder: HF321GD
+template="template.gjf"
+cp $template HF321GD/
+cd HF321GD
+echo Converting crest_ensemble.xyz to gjf files
+xyz2QC << EOF > /dev/null
 2
-2
-${inf//gjf/xyz}
-0
-q
+${location}/HF321GD/crest_ensemble.xyz
+
+${inputname}_crest_HF321GD_
+
 EOF
+
+echo "
+Completed!"
